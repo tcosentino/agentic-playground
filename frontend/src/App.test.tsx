@@ -20,37 +20,27 @@ describe('App', () => {
   describe('Initial Render', () => {
     it('should render the app title', async () => {
       render(<App />);
-      await waitFor(() => {
-        expect(screen.getByText('AI Agent Playground')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('AI Agent Playground')).toBeInTheDocument();
     });
 
     it('should render new request panel', async () => {
       render(<App />);
-      await waitFor(() => {
-        expect(screen.getByText('New Request')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('New Request')).toBeInTheDocument();
     });
 
     it('should render response panel', async () => {
       render(<App />);
-      await waitFor(() => {
-        expect(screen.getByText('Response')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Response')).toBeInTheDocument();
     });
 
     it('should render history panel', async () => {
       render(<App />);
-      await waitFor(() => {
-        expect(screen.getByText(/History \(0\)/)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/History \(0\)/)).toBeInTheDocument();
     });
 
     it('should render form inputs', async () => {
       render(<App />);
-      await waitFor(() => {
-        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
-      });
+      expect(await screen.findByLabelText('Provider')).toBeInTheDocument();
       expect(screen.getByLabelText('Model')).toBeInTheDocument();
       expect(screen.getByLabelText('Message')).toBeInTheDocument();
       expect(screen.getByText(/Temperature:/)).toBeInTheDocument();
@@ -59,30 +49,22 @@ describe('App', () => {
 
     it('should have submit button', async () => {
       render(<App />);
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: 'Send Request' })).toBeInTheDocument();
-      });
+      expect(await screen.findByRole('button', { name: 'Send Request' })).toBeInTheDocument();
     });
   });
 
   describe('Provider Selection', () => {
     it('should default to Anthropic provider', async () => {
       render(<App />);
-      await waitFor(() => {
-        const providerSelect = screen.getByLabelText('Provider') as HTMLSelectElement;
-        expect(providerSelect.value).toBe('anthropic');
-      });
+      const providerSelect = await screen.findByLabelText('Provider') as HTMLSelectElement;
+      expect(providerSelect.value).toBe('anthropic');
     });
 
     it('should change to OpenAI provider', async () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
-      });
-
-      const providerSelect = screen.getByLabelText('Provider');
+      const providerSelect = await screen.findByLabelText('Provider');
       await user.selectOptions(providerSelect, 'openai');
 
       expect((providerSelect as HTMLSelectElement).value).toBe('openai');
@@ -92,12 +74,8 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
-      });
-
-      const providerSelect = screen.getByLabelText('Provider');
-      const modelSelect = screen.getByLabelText('Model') as HTMLSelectElement;
+      const providerSelect = await screen.findByLabelText('Provider');
+      const modelSelect = await screen.findByLabelText('Model') as HTMLSelectElement;
 
       // Initially Anthropic model
       expect(modelSelect.value).toBe('claude-3-5-sonnet-20241022');
@@ -111,22 +89,17 @@ describe('App', () => {
 
     it('should show Anthropic models when Anthropic is selected', async () => {
       render(<App />);
-      await waitFor(() => {
-        const modelSelect = screen.getByLabelText('Model');
-        expect(modelSelect).toHaveTextContent('Claude 3.5 Sonnet');
-        expect(modelSelect).toHaveTextContent('Claude 3 Opus');
-      });
+      const modelSelect = await screen.findByLabelText('Model');
+
+      expect(modelSelect).toHaveTextContent('Claude 3.5 Sonnet');
+      expect(modelSelect).toHaveTextContent('Claude 3 Opus');
     });
 
     it('should show OpenAI models when OpenAI is selected', async () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
-      });
-
-      const providerSelect = screen.getByLabelText('Provider');
+      const providerSelect = await screen.findByLabelText('Provider');
       await user.selectOptions(providerSelect, 'openai');
 
       const modelSelect = screen.getByLabelText('Model');
@@ -140,11 +113,7 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
-      const messageInput = screen.getByLabelText('Message') as HTMLTextAreaElement;
+      const messageInput = await screen.findByLabelText('Message') as HTMLTextAreaElement;
       await user.type(messageInput, 'Test message');
 
       expect(messageInput.value).toBe('Test message');
@@ -154,11 +123,7 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText(/Temperature:/)).toBeInTheDocument();
-      });
-
-      const tempInput = screen.getByLabelText(/Temperature:/) as HTMLInputElement;
+      const tempInput = await screen.findByLabelText(/Temperature:/) as HTMLInputElement;
       await user.clear(tempInput);
       await user.type(tempInput, '0.5');
 
@@ -169,11 +134,7 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Max Tokens')).toBeInTheDocument();
-      });
-
-      const maxTokensInput = screen.getByLabelText('Max Tokens') as HTMLInputElement;
+      const maxTokensInput = await screen.findByLabelText('Max Tokens') as HTMLInputElement;
       await user.clear(maxTokensInput);
       await user.type(maxTokensInput, '500');
 
@@ -186,13 +147,9 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
       mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
 
-      const messageInput = screen.getByLabelText('Message');
+      const messageInput = await screen.findByLabelText('Message');
       await user.type(messageInput, 'Test');
 
       const submitButton = screen.getByRole('button', { name: 'Send Request' });
@@ -206,13 +163,9 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
       mockFetch.mockImplementation(() => new Promise(() => {}));
 
-      const messageInput = screen.getByLabelText('Message');
+      const messageInput = await screen.findByLabelText('Message');
       await user.type(messageInput, 'Test');
 
       const submitButton = screen.getByRole('button', { name: 'Send Request' });
@@ -226,7 +179,7 @@ describe('App', () => {
       const mockResponse = {
         id: 'test-123',
         timestamp: new Date().toISOString(),
-        provider: 'anthropic',
+        provider: 'anthropic' as const,
         request: {
           raw: {},
           formatted: '{}',
@@ -241,10 +194,6 @@ describe('App', () => {
 
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
       // Mock the chat API call
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -257,15 +206,15 @@ describe('App', () => {
         json: async () => [mockResponse],
       } as Response);
 
-      const messageInput = screen.getByLabelText('Message');
+      const messageInput = await screen.findByLabelText('Message');
       await user.type(messageInput, 'Test');
 
       const submitButton = screen.getByRole('button', { name: 'Send Request' });
       await user.click(submitButton);
 
-      await waitFor(() => {
-        expect(screen.getByText('Test response content')).toBeInTheDocument();
-      });
+      // Check that response appears (may be in multiple places - response panel and history)
+      const responseElements = await screen.findAllByText('Test response content');
+      expect(responseElements.length).toBeGreaterThan(0);
     });
 
     it('should handle API error', async () => {
@@ -273,25 +222,19 @@ describe('App', () => {
 
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
       // Mock error response
       mockFetch.mockResolvedValueOnce({
         ok: false,
         json: async () => ({ error: 'Test error' }),
       } as Response);
 
-      const messageInput = screen.getByLabelText('Message');
+      const messageInput = await screen.findByLabelText('Message');
       await user.type(messageInput, 'Test');
 
       const submitButton = screen.getByRole('button', { name: 'Send Request' });
       await user.click(submitButton);
 
-      await waitFor(() => {
-        expect(screen.getByText('Test error')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('Test error')).toBeInTheDocument();
     });
   });
 
@@ -316,10 +259,6 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
       // Mock chat response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -332,23 +271,19 @@ describe('App', () => {
         json: async () => [mockResponse],
       } as Response);
 
-      const messageInput = screen.getByLabelText('Message');
+      const messageInput = await screen.findByLabelText('Message');
       await user.type(messageInput, 'Test');
       await user.click(screen.getByRole('button', { name: 'Send Request' }));
 
-      await waitFor(() => {
-        expect(screen.getByText('Test response')).toBeInTheDocument();
-      });
+      // Response appears in multiple places, check for any instance
+      const responseElements = await screen.findAllByText('Test response');
+      expect(responseElements.length).toBeGreaterThan(0);
     });
 
     it('should switch to request tab', async () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
       // Mock chat response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -361,13 +296,11 @@ describe('App', () => {
         json: async () => [mockResponse],
       } as Response);
 
-      const messageInput = screen.getByLabelText('Message');
+      const messageInput = await screen.findByLabelText('Message');
       await user.type(messageInput, 'Test');
       await user.click(screen.getByRole('button', { name: 'Send Request' }));
 
-      await waitFor(() => {
-        expect(screen.getByText('Test response')).toBeInTheDocument();
-      });
+      await screen.findAllByText('Test response');
 
       const requestTab = screen.getByRole('button', { name: 'Raw Request' });
       await user.click(requestTab);
@@ -379,10 +312,6 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByLabelText('Message')).toBeInTheDocument();
-      });
-
       // Mock chat response
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -395,13 +324,11 @@ describe('App', () => {
         json: async () => [mockResponse],
       } as Response);
 
-      const messageInput = screen.getByLabelText('Message');
+      const messageInput = await screen.findByLabelText('Message');
       await user.type(messageInput, 'Test');
       await user.click(screen.getByRole('button', { name: 'Send Request' }));
 
-      await waitFor(() => {
-        expect(screen.getByText('Test response')).toBeInTheDocument();
-      });
+      await screen.findAllByText('Test response');
 
       const responseTab = screen.getByRole('button', { name: 'Raw Response' });
       await user.click(responseTab);
@@ -414,9 +341,7 @@ describe('App', () => {
     it('should show empty history message initially', async () => {
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByText('No history yet. Make a request to get started.')).toBeInTheDocument();
-      });
+      expect(await screen.findByText('No history yet. Make a request to get started.')).toBeInTheDocument();
     });
 
     it('should load history on mount', async () => {
@@ -424,7 +349,7 @@ describe('App', () => {
         {
           id: 'test-1',
           timestamp: new Date().toISOString(),
-          provider: 'anthropic',
+          provider: 'anthropic' as const,
           request: { raw: {}, formatted: '{}' },
           response: { raw: {}, formatted: '{}', content: 'Response 1' },
           duration: 100,
@@ -438,9 +363,7 @@ describe('App', () => {
 
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByText(/Response 1/)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/Response 1/)).toBeInTheDocument();
     });
 
     it('should clear history', async () => {
@@ -449,7 +372,7 @@ describe('App', () => {
         {
           id: 'test-1',
           timestamp: new Date().toISOString(),
-          provider: 'anthropic',
+          provider: 'anthropic' as const,
           request: { raw: {}, formatted: '{}' },
           response: { raw: {}, formatted: '{}', content: 'Response 1' },
           duration: 100,
@@ -464,9 +387,7 @@ describe('App', () => {
 
       render(<App />);
 
-      await waitFor(() => {
-        expect(screen.getByText(/Response 1/)).toBeInTheDocument();
-      });
+      await screen.findByText(/Response 1/);
 
       // Mock window.confirm
       const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);

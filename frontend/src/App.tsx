@@ -108,8 +108,9 @@ function App() {
           <h2>New Request</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Provider</label>
+              <label htmlFor="provider">Provider</label>
               <select
+                id="provider"
                 value={provider}
                 onChange={(e) => {
                   const newProvider = e.target.value as 'anthropic' | 'openai';
@@ -127,8 +128,8 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label>Model</label>
-              <select value={model} onChange={(e) => setModel(e.target.value)}>
+              <label htmlFor="model">Model</label>
+              <select id="model" value={model} onChange={(e) => setModel(e.target.value)}>
                 {provider === 'anthropic' ? (
                   <>
                     <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</option>
@@ -147,8 +148,9 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label>Message</label>
+              <label htmlFor="message">Message</label>
               <textarea
+                id="message"
                 value={userMessage}
                 onChange={(e) => setUserMessage(e.target.value)}
                 placeholder="Enter your message..."
@@ -157,8 +159,9 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label>Temperature: {temperature}</label>
+              <label htmlFor="temperature">Temperature: {temperature}</label>
               <input
+                id="temperature"
                 type="number"
                 min="0"
                 max="2"
@@ -169,8 +172,9 @@ function App() {
             </div>
 
             <div className="form-group">
-              <label>Max Tokens</label>
+              <label htmlFor="maxTokens">Max Tokens</label>
               <input
+                id="maxTokens"
                 type="number"
                 min="1"
                 max="4096"
