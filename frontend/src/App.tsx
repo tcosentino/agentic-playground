@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { AIRequest, AIResponse } from './types';
+import { Functions } from './components/Functions';
 
 type Tab = 'content' | 'request' | 'response';
+type MainTab = 'playground' | 'functions';
 
 function App() {
+  const [mainTab, setMainTab] = useState<MainTab>('playground');
   const [provider, setProvider] = useState<'anthropic' | 'openai'>('anthropic');
   const [model, setModel] = useState('claude-3-5-sonnet-20241022');
   const [userMessage, setUserMessage] = useState('');
@@ -100,10 +103,30 @@ function App() {
 
   return (
     <div className="app">
-      <h1>AI Agent Playground</h1>
+      <div className="app-header">
+        <h1>AI Agent Playground</h1>
+        <div className="main-tabs">
+          <button
+            className={`main-tab ${mainTab === 'playground' ? 'active' : ''}`}
+            onClick={() => setMainTab('playground')}
+          >
+            Playground
+          </button>
+          <button
+            className={`main-tab ${mainTab === 'functions' ? 'active' : ''}`}
+            onClick={() => setMainTab('functions')}
+          >
+            Functions
+          </button>
+        </div>
+      </div>
 
-      <div className="container">
-        {/* Request Panel */}
+      {mainTab === 'functions' ? (
+        <Functions />
+      ) : (
+        <>
+          <div className="container">
+            {/* Request Panel */}
         <div className="panel">
           <h2>New Request</h2>
           <form onSubmit={handleSubmit}>
@@ -284,6 +307,8 @@ function App() {
           )}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }
