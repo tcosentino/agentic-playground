@@ -10,54 +10,77 @@ global.fetch = mockFetch;
 describe('App', () => {
   beforeEach(() => {
     mockFetch.mockReset();
+    // Default mock for history loading on mount
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    } as Response);
   });
 
   describe('Initial Render', () => {
-    it('should render the app title', () => {
+    it('should render the app title', async () => {
       render(<App />);
-      expect(screen.getByText('AI Agent Playground')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('AI Agent Playground')).toBeInTheDocument();
+      });
     });
 
-    it('should render new request panel', () => {
+    it('should render new request panel', async () => {
       render(<App />);
-      expect(screen.getByText('New Request')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('New Request')).toBeInTheDocument();
+      });
     });
 
-    it('should render response panel', () => {
+    it('should render response panel', async () => {
       render(<App />);
-      expect(screen.getByText('Response')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Response')).toBeInTheDocument();
+      });
     });
 
-    it('should render history panel', () => {
+    it('should render history panel', async () => {
       render(<App />);
-      expect(screen.getByText(/History/)).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(/History \(0\)/)).toBeInTheDocument();
+      });
     });
 
-    it('should render form inputs', () => {
+    it('should render form inputs', async () => {
       render(<App />);
-      expect(screen.getByLabelText('Provider')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
+      });
       expect(screen.getByLabelText('Model')).toBeInTheDocument();
       expect(screen.getByLabelText('Message')).toBeInTheDocument();
       expect(screen.getByText(/Temperature:/)).toBeInTheDocument();
       expect(screen.getByLabelText('Max Tokens')).toBeInTheDocument();
     });
 
-    it('should have submit button', () => {
+    it('should have submit button', async () => {
       render(<App />);
-      expect(screen.getByRole('button', { name: 'Send Request' })).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Send Request' })).toBeInTheDocument();
+      });
     });
   });
 
   describe('Provider Selection', () => {
-    it('should default to Anthropic provider', () => {
+    it('should default to Anthropic provider', async () => {
       render(<App />);
-      const providerSelect = screen.getByLabelText('Provider') as HTMLSelectElement;
-      expect(providerSelect.value).toBe('anthropic');
+      await waitFor(() => {
+        const providerSelect = screen.getByLabelText('Provider') as HTMLSelectElement;
+        expect(providerSelect.value).toBe('anthropic');
+      });
     });
 
     it('should change to OpenAI provider', async () => {
       const user = userEvent.setup();
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
+      });
 
       const providerSelect = screen.getByLabelText('Provider');
       await user.selectOptions(providerSelect, 'openai');
@@ -68,6 +91,10 @@ describe('App', () => {
     it('should update model when provider changes', async () => {
       const user = userEvent.setup();
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
+      });
 
       const providerSelect = screen.getByLabelText('Provider');
       const modelSelect = screen.getByLabelText('Model') as HTMLSelectElement;
@@ -82,17 +109,22 @@ describe('App', () => {
       expect(modelSelect.value).toBe('gpt-4-turbo-preview');
     });
 
-    it('should show Anthropic models when Anthropic is selected', () => {
+    it('should show Anthropic models when Anthropic is selected', async () => {
       render(<App />);
-      const modelSelect = screen.getByLabelText('Model');
-
-      expect(modelSelect).toHaveTextContent('Claude 3.5 Sonnet');
-      expect(modelSelect).toHaveTextContent('Claude 3 Opus');
+      await waitFor(() => {
+        const modelSelect = screen.getByLabelText('Model');
+        expect(modelSelect).toHaveTextContent('Claude 3.5 Sonnet');
+        expect(modelSelect).toHaveTextContent('Claude 3 Opus');
+      });
     });
 
     it('should show OpenAI models when OpenAI is selected', async () => {
       const user = userEvent.setup();
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Provider')).toBeInTheDocument();
+      });
 
       const providerSelect = screen.getByLabelText('Provider');
       await user.selectOptions(providerSelect, 'openai');
@@ -108,6 +140,10 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
       const messageInput = screen.getByLabelText('Message') as HTMLTextAreaElement;
       await user.type(messageInput, 'Test message');
 
@@ -117,6 +153,10 @@ describe('App', () => {
     it('should update temperature', async () => {
       const user = userEvent.setup();
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText(/Temperature:/)).toBeInTheDocument();
+      });
 
       const tempInput = screen.getByLabelText(/Temperature:/) as HTMLInputElement;
       await user.clear(tempInput);
@@ -129,6 +169,10 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
+      await waitFor(() => {
+        expect(screen.getByLabelText('Max Tokens')).toBeInTheDocument();
+      });
+
       const maxTokensInput = screen.getByLabelText('Max Tokens') as HTMLInputElement;
       await user.clear(maxTokensInput);
       await user.type(maxTokensInput, '500');
@@ -140,9 +184,13 @@ describe('App', () => {
   describe('Form Submission', () => {
     it('should disable submit button during loading', async () => {
       const user = userEvent.setup();
-      mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
-
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
+      mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
 
       const messageInput = screen.getByLabelText('Message');
       await user.type(messageInput, 'Test');
@@ -156,9 +204,13 @@ describe('App', () => {
 
     it('should show loading message', async () => {
       const user = userEvent.setup();
-      mockFetch.mockImplementation(() => new Promise(() => {}));
-
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
+      mockFetch.mockImplementation(() => new Promise(() => {}));
 
       const messageInput = screen.getByLabelText('Message');
       await user.type(messageInput, 'Test');
@@ -187,17 +239,23 @@ describe('App', () => {
         duration: 100,
       };
 
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
+      // Mock the chat API call
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => mockResponse,
-      });
+      } as Response);
 
+      // Mock the history reload after chat
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => [mockResponse],
-      });
-
-      render(<App />);
+      } as Response);
 
       const messageInput = screen.getByLabelText('Message');
       await user.type(messageInput, 'Test');
@@ -212,12 +270,18 @@ describe('App', () => {
 
     it('should handle API error', async () => {
       const user = userEvent.setup();
+
+      render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
+      // Mock error response
       mockFetch.mockResolvedValueOnce({
         ok: false,
         json: async () => ({ error: 'Test error' }),
-      });
-
-      render(<App />);
+      } as Response);
 
       const messageInput = screen.getByLabelText('Message');
       await user.type(messageInput, 'Test');
@@ -232,37 +296,41 @@ describe('App', () => {
   });
 
   describe('Response Tabs', () => {
-    beforeEach(async () => {
-      const mockResponse = {
-        id: 'test-123',
-        timestamp: new Date().toISOString(),
-        provider: 'anthropic',
-        request: {
-          raw: { model: 'claude-3-5-sonnet-20241022' },
-          formatted: '{"model": "claude-3-5-sonnet-20241022"}',
-        },
-        response: {
-          raw: { id: 'msg-123' },
-          formatted: '{"id": "msg-123"}',
-          content: 'Test response',
-        },
-        duration: 100,
-      };
-
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      });
-
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => [mockResponse],
-      });
-    });
+    const mockResponse = {
+      id: 'test-123',
+      timestamp: new Date().toISOString(),
+      provider: 'anthropic' as const,
+      request: {
+        raw: { model: 'claude-3-5-sonnet-20241022' },
+        formatted: '{"model": "claude-3-5-sonnet-20241022"}',
+      },
+      response: {
+        raw: { id: 'msg-123' },
+        formatted: '{"id": "msg-123"}',
+        content: 'Test response',
+      },
+      duration: 100,
+    };
 
     it('should show content tab by default', async () => {
       const user = userEvent.setup();
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
+      // Mock chat response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      } as Response);
+
+      // Mock history reload
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [mockResponse],
+      } as Response);
 
       const messageInput = screen.getByLabelText('Message');
       await user.type(messageInput, 'Test');
@@ -276,6 +344,22 @@ describe('App', () => {
     it('should switch to request tab', async () => {
       const user = userEvent.setup();
       render(<App />);
+
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
+      // Mock chat response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      } as Response);
+
+      // Mock history reload
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [mockResponse],
+      } as Response);
 
       const messageInput = screen.getByLabelText('Message');
       await user.type(messageInput, 'Test');
@@ -295,6 +379,22 @@ describe('App', () => {
       const user = userEvent.setup();
       render(<App />);
 
+      await waitFor(() => {
+        expect(screen.getByLabelText('Message')).toBeInTheDocument();
+      });
+
+      // Mock chat response
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      } as Response);
+
+      // Mock history reload
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [mockResponse],
+      } as Response);
+
       const messageInput = screen.getByLabelText('Message');
       await user.type(messageInput, 'Test');
       await user.click(screen.getByRole('button', { name: 'Send Request' }));
@@ -312,11 +412,6 @@ describe('App', () => {
 
   describe('History', () => {
     it('should show empty history message initially', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => [],
-      });
-
       render(<App />);
 
       await waitFor(() => {
@@ -339,7 +434,7 @@ describe('App', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => mockHistory,
-      });
+      } as Response);
 
       render(<App />);
 
@@ -365,7 +460,7 @@ describe('App', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => mockHistory,
-      });
+      } as Response);
 
       render(<App />);
 
@@ -376,14 +471,18 @@ describe('App', () => {
       // Mock window.confirm
       const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
-      // Mock clear history
+      // Mock clear history response
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ message: 'History cleared' }),
-      });
+      } as Response);
 
       const clearButton = screen.getByRole('button', { name: 'Clear History' });
       await user.click(clearButton);
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith('/api/ai/history', { method: 'DELETE' });
+      });
 
       confirmSpy.mockRestore();
     });
