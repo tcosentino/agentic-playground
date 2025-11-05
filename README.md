@@ -174,6 +174,61 @@ npm run dev:frontend
 npm run build
 ```
 
+## Testing
+
+The project includes comprehensive test suites for both frontend and backend using Vitest.
+
+### Run all tests:
+```bash
+npm test
+```
+
+### Run backend tests only:
+```bash
+npm run test:backend
+```
+
+### Run frontend tests only:
+```bash
+npm run test:frontend
+```
+
+### Run tests in watch mode:
+```bash
+npm run test:watch
+```
+
+### Generate coverage reports:
+```bash
+npm run test:coverage
+```
+
+### Test Coverage
+
+**Backend Tests:**
+- API endpoint testing with Supertest
+- Health check validation
+- Route validation and error handling
+- Request/response format validation
+- History management
+
+**Frontend Tests:**
+- Component rendering
+- User interactions (form inputs, button clicks)
+- Provider and model selection
+- API integration with mocked responses
+- Error handling and loading states
+- Response tab switching
+- History loading and clearing
+
+### Testing Stack
+
+- **Vitest** - Fast unit test framework
+- **React Testing Library** - React component testing
+- **@testing-library/user-event** - User interaction simulation
+- **Supertest** - HTTP assertion library for backend
+- **jsdom** - DOM implementation for testing
+
 ## Tech Stack
 
 ### Frontend

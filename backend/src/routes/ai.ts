@@ -8,6 +8,12 @@ const router = Router();
 // In-memory storage for request history
 const history: AIResponse[] = [];
 
+// Export for testing
+export const getHistory = () => history;
+export const clearHistory = () => {
+  history.length = 0;
+};
+
 // Initialize API clients
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
