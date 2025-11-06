@@ -33,6 +33,33 @@ export function Functions() {
           onUpdate={updateFunction}
         />
       </div>
+      <div className="functions-sidebar-right">
+        <h3>Parameters</h3>
+        {selectedFunction?.parameters ? (
+          <div className="parameters-panel">
+            {Object.entries(selectedFunction.parameters.properties).map(([name, prop]) => (
+              <div key={name} className="parameter-item">
+                <div className="parameter-header">
+                  <span className="parameter-name">{name}</span>
+                  {selectedFunction.parameters?.required.includes(name) ? (
+                    <span className="parameter-badge required">required</span>
+                  ) : (
+                    <span className="parameter-badge optional">optional</span>
+                  )}
+                </div>
+                <div className="parameter-type">{prop.type}</div>
+                {prop.description && (
+                  <div className="parameter-description">{prop.description}</div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="parameters-empty">
+            {selectedFunction ? 'No parameters detected' : 'Select a function to view parameters'}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

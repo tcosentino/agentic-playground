@@ -1,8 +1,8 @@
 .functions-container {
   display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 20px;
-  height: calc(100vh - 180px);
+  grid-template-columns: 250px 1fr 300px;
+  gap: 8px;
+  height: calc(100vh - 80px);
   min-height: 600px;
 }
 
@@ -10,17 +10,121 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: #252526;
+  border: 1px solid #3e3e42;
+  overflow: hidden;
 }
 
 .functions-main {
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: #1e1e1e;
+  border: 1px solid #3e3e42;
+  overflow: hidden;
+}
+
+.functions-sidebar-right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #252526;
+  border: 1px solid #3e3e42;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.functions-sidebar-right h3 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #cccccc;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #3e3e42;
+}
+
+.parameters-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.parameter-item {
+  padding: 8px;
+  background-color: #2d2d30;
+  border: 1px solid #3e3e42;
+  border-radius: 2px;
+}
+
+.parameter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.parameter-name {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4fc1ff;
+}
+
+.parameter-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.parameter-badge.required {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.parameter-badge.optional {
+  background-color: rgba(136, 136, 136, 0.15);
+  border: 1px solid #888;
+  color: #888;
+}
+
+.parameter-type {
+  font-size: 12px;
+  color: #569cd6;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  margin-bottom: 4px;
+}
+
+.parameter-description {
+  font-size: 11px;
+  color: #858585;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.parameters-empty {
+  font-size: 12px;
+  color: #858585;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+@media (max-width: 1400px) {
+  .functions-container {
+    grid-template-columns: 220px 1fr 280px;
+  }
 }
 
 @media (max-width: 1024px) {
   .functions-container {
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 200px 1fr;
+  }
+
+  .functions-sidebar-right {
+    display: none;
   }
 }
 
@@ -31,7 +135,7 @@
   }
 
   .functions-sidebar {
-    height: 400px;
+    height: 300px;
   }
 
   .functions-main {
