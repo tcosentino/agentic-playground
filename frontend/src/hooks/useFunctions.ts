@@ -185,8 +185,10 @@ export function useFunctions() {
         if (Array.isArray(parsed) && parsed.length === 0) {
           const examples = getExampleFunctions();
           setFunctions(examples);
+          setSelectedFunctionId(examples[0]?.id || null);
         } else {
           setFunctions(parsed);
+          setSelectedFunctionId(parsed[0]?.id || null);
         }
       } catch (error) {
         console.error('Failed to load functions from localStorage:', error);
@@ -195,6 +197,7 @@ export function useFunctions() {
       // Initialize with example functions if none exist
       const examples = getExampleFunctions();
       setFunctions(examples);
+      setSelectedFunctionId(examples[0]?.id || null);
     }
   }, []);
 

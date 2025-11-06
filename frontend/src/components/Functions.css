@@ -27,6 +27,7 @@
 .functions-sidebar-right {
   display: flex;
   flex-direction: column;
+  gap: 16px;
   height: 100%;
   background-color: #252526;
   border: 1px solid #3e3e42;
@@ -34,9 +35,14 @@
   overflow-y: auto;
 }
 
-.functions-sidebar-right h3 {
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-section h3 {
   margin: 0 0 12px 0;
-  font-size: 1rem;
+  font-size: 13px;
   font-weight: 500;
   color: #cccccc;
   padding-bottom: 8px;
@@ -110,6 +116,19 @@
   font-style: italic;
   text-align: center;
   padding: 20px;
+}
+
+.return-type-display {
+  padding: 8px;
+  background-color: #2d2d30;
+  border: 1px solid #3e3e42;
+  border-radius: 2px;
+}
+
+.return-type-display code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  color: #569cd6;
 }
 
 @media (max-width: 1400px) {

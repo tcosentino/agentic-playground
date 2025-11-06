@@ -133,8 +133,8 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
         />
       </div>
 
-      <div className="function-editor-footer">
-        {functionDef.validation && functionDef.validation.errors.length > 0 && (
+      {functionDef.validation && functionDef.validation.errors.length > 0 && (
+        <div className="function-editor-footer">
           <div className="validation-errors">
             <h4>Validation Messages:</h4>
             {functionDef.validation.errors.map((error, idx) => (
@@ -145,40 +145,8 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
               </div>
             ))}
           </div>
-        )}
-
-        {functionDef.parameters && (
-          <div className="schema-info">
-            <h4>Detected Parameters:</h4>
-            <div className="schema-details">
-              {Object.entries(functionDef.parameters.properties).map(([name, prop]) => (
-                <div key={name} className="param-info">
-                  <span className="param-name">{name}</span>
-                  <span className="param-type">{prop.type}</span>
-                  {functionDef.parameters!.required.includes(name) && (
-                    <span className="param-required">required</span>
-                  )}
-                  {prop.description && (
-                    <span className="param-description">- {prop.description}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {functionDef.returnType && (
-          <div className="return-type-info">
-            <h4>Return Type:</h4>
-            <code>{functionDef.returnType}</code>
-          </div>
-        )}
-
-        <div className="function-meta">
-          <span>Created: {new Date(functionDef.createdAt).toLocaleString()}</span>
-          <span>Updated: {new Date(functionDef.updatedAt).toLocaleString()}</span>
         </div>
-      </div>
+      )}
     </div>
   );
 }
