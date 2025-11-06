@@ -8,6 +8,7 @@ interface FunctionListProps {
   onSelectFunction: (id: string) => void;
   onCreateFunction: (name: string, description: string) => void;
   onDeleteFunction: (id: string) => void;
+  onLoadExamples: () => void;
 }
 
 export function FunctionList({
@@ -16,6 +17,7 @@ export function FunctionList({
   onSelectFunction,
   onCreateFunction,
   onDeleteFunction,
+  onLoadExamples,
 }: FunctionListProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newFunctionName, setNewFunctionName] = useState('');
@@ -38,16 +40,34 @@ export function FunctionList({
     }
   };
 
+  const handleLoadExamples = () => {
+    if (functions.length > 0) {
+      if (!confirm('This will replace all current functions with examples. Continue?')) {
+        return;
+      }
+    }
+    onLoadExamples();
+  };
+
   return (
     <div className="function-list">
       <div className="function-list-header">
         <h3>Functions</h3>
-        <button
-          className="create-function-btn"
-          onClick={() => setShowCreateModal(true)}
-        >
-          + New Function
-        </button>
+        <div className="function-list-actions">
+          <button
+            className="create-function-btn"
+            onClick={() => setShowCreateModal(true)}
+          >
+            + New
+          </button>
+          <button
+            className="load-examples-btn secondary"
+            onClick={handleLoadExamples}
+            title="Load example functions"
+          >
+            📚
+          </button>
+        </div>
       </div>
 
       <div className="function-items">

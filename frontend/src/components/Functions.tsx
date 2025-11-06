@@ -12,6 +12,7 @@ export function Functions() {
     createFunction,
     updateFunction,
     deleteFunction,
+    loadExamples,
   } = useFunctions();
 
   return (
@@ -23,6 +24,7 @@ export function Functions() {
           onSelectFunction={setSelectedFunctionId}
           onCreateFunction={createFunction}
           onDeleteFunction={deleteFunction}
+          onLoadExamples={loadExamples}
         />
       </div>
       <div className="functions-main">

@@ -21,7 +21,13 @@
   color: #fff;
 }
 
-.create-function-btn {
+.function-list-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.create-function-btn,
+.load-examples-btn {
   padding: 8px 16px;
   background-color: #4a9eff;
   color: white;
@@ -30,10 +36,16 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  white-space: nowrap;
 }
 
 .create-function-btn:hover {
   background-color: #3a8eef;
+}
+
+.load-examples-btn {
+  padding: 8px 12px;
+  font-size: 1.1rem;
 }
 
 .function-items {

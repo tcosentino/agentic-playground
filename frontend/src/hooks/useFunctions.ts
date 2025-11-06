@@ -160,7 +160,13 @@ export function useFunctions() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setFunctions(parsed);
+        // Initialize with examples if stored array is empty
+        if (Array.isArray(parsed) && parsed.length === 0) {
+          const examples = getExampleFunctions();
+          setFunctions(examples);
+        } else {
+          setFunctions(parsed);
+        }
       } catch (error) {
         console.error('Failed to load functions from localStorage:', error);
       }
