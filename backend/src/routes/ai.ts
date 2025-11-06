@@ -45,12 +45,17 @@ router.post('/chat', async (req, res) => {
 
     if (aiRequest.provider === 'anthropic') {
       // Prepare Anthropic request
-      const anthropicRequest = {
+      const anthropicRequest: any = {
         model: aiRequest.model || 'claude-3-5-sonnet-20241022',
         max_tokens: aiRequest.maxTokens || 1024,
         messages: aiRequest.messages,
         temperature: aiRequest.temperature,
       };
+
+      // Add tools if provided
+      if (aiRequest.tools && aiRequest.tools.length > 0) {
+        anthropicRequest.tools = aiRequest.tools;
+      }
 
       console.log('=== ANTHROPIC REQUEST ===');
       console.log(JSON.stringify(anthropicRequest, null, 2));

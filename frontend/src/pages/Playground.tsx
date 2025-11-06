@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { AIRequest, AIResponse } from '../types';
+import { FunctionDefinition } from '../types/functions';
+import { generateAnthropicToolSchema } from '../utils/schemaGenerator';
+
+const STORAGE_KEY = 'ai-playground-functions';
 
 type Tab = 'content' | 'request' | 'response';
 
@@ -35,11 +39,30 @@ export default function Playground() {
   const [history, setHistory] = useState<AIResponse[]>([]);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('content');
+  const [availableFunctions, setAvailableFunctions] = useState<FunctionDefinition[]>([]);
+  const [selectedFunctionIds, setSelectedFunctionIds] = useState<string[]>([]);
 
-  // Load history on mount
+  // Load history and functions on mount
   useEffect(() => {
     loadHistory();
+    loadFunctions();
   }, []);
+
+  const loadFunctions = () => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Only show valid functions
+        const validFunctions = parsed.filter((fn: FunctionDefinition) =>
+          fn.validation?.isValid && fn.parameters
+        );
+        setAvailableFunctions(validFunctions);
+      }
+    } catch (err) {
+      console.error('Failed to load functions:', err);
+    }
+  };
 
   const loadHistory = async () => {
     try {
@@ -58,6 +81,15 @@ export default function Playground() {
     setCurrentResponse(null);
     setSelectedHistoryId(null);
 
+    // Convert selected functions to tool schemas
+    const tools = selectedFunctionIds
+      .map((id) => {
+        const fn = availableFunctions.find((f) => f.id === id);
+        if (!fn) return null;
+        return generateAnthropicToolSchema(fn);
+      })
+      .filter((tool): tool is NonNullable<typeof tool> => tool !== null);
+
     const request: AIRequest = {
       provider: selectedModel.provider,
       model: selectedModel.model,
@@ -69,6 +101,7 @@ export default function Playground() {
       ],
       temperature,
       maxTokens,
+      tools: tools.length > 0 ? tools : undefined,
     };
 
     try {
@@ -151,6 +184,39 @@ export default function Playground() {
                   isSearchable
                   classNamePrefix="react-select"
                 />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="tools">
+                  Tools ({selectedFunctionIds.length} selected)
+                </label>
+                <div className="tools-selection">
+                  {availableFunctions.length === 0 ? (
+                    <p className="no-tools-message">
+                      No valid functions available. Create and validate functions in the Tools Editor.
+                    </p>
+                  ) : (
+                    availableFunctions.map((fn) => (
+                      <label key={fn.id} className="tool-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectedFunctionIds.includes(fn.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedFunctionIds([...selectedFunctionIds, fn.id]);
+                            } else {
+                              setSelectedFunctionIds(
+                                selectedFunctionIds.filter((id) => id !== fn.id)
+                              );
+                            }
+                          }}
+                        />
+                        <span className="tool-name">{fn.name}</span>
+                        <span className="tool-description">{fn.description}</span>
+                      </label>
+                    ))
+                  )}
+                </div>
               </div>
 
               <div className="form-row-inline">

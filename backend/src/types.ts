@@ -7,6 +7,15 @@ export interface AIRequest {
   }>;
   temperature?: number;
   maxTokens?: number;
+  tools?: Array<{
+    name: string;
+    description: string;
+    input_schema: {
+      type: 'object';
+      properties: Record<string, any>;
+      required: string[];
+    };
+  }>;
 }
 
 export interface AIResponse {

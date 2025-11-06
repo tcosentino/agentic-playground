@@ -123,6 +123,55 @@ h1 {
   margin-bottom: 15px;
 }
 
+.tools-selection {
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 8px;
+  background-color: #1a1a1a;
+}
+
+.tool-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tool-checkbox:hover {
+  background-color: #2a2a2a;
+}
+
+.tool-checkbox input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
+.tool-name {
+  color: #10b981;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+}
+
+.tool-description {
+  color: #888;
+  font-size: 0.85rem;
+  flex: 1;
+}
+
+.no-tools-message {
+  color: #888;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  padding: 15px;
+}
+
 label {
   display: block;
   margin-bottom: 5px;
