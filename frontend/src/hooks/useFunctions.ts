@@ -154,10 +154,26 @@ export async function sendEmail(params: {
   };
 }`;
 
+  const invalidCode = `// This function has multiple validation issues
+export async function processData(data) {
+  // Missing JSDoc comment
+  // Missing parameter type annotation
+  // Missing return type
+  // Missing parameter descriptions
+
+  const result = await fetch('/api/process', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+
+  return result.json();
+}`;
+
   // Validate and extract schemas for each example
   const weatherSchema = validateAndExtractSchema(weatherCode);
   const searchSchema = validateAndExtractSchema(searchCode);
   const emailSchema = validateAndExtractSchema(emailCode);
+  const invalidSchema = validateAndExtractSchema(invalidCode);
 
   return [
     {
@@ -193,6 +209,18 @@ export async function sendEmail(params: {
       parameters: emailSchema.parameters || undefined,
       returnType: emailSchema.returnType || undefined,
       returnTypeSchema: emailSchema.returnTypeSchema || undefined,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: 'processData',
+      description: 'Example with validation issues',
+      code: invalidCode,
+      validation: invalidSchema.validation,
+      parameters: invalidSchema.parameters || undefined,
+      returnType: invalidSchema.returnType || undefined,
+      returnTypeSchema: invalidSchema.returnTypeSchema || undefined,
       createdAt: now,
       updatedAt: now,
     },

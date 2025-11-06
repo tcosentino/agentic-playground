@@ -1,5 +1,5 @@
 import { FunctionValidation, ValidationError, ParameterSchema, ReturnTypeSchema } from '../types/functions';
-import { parseParameterSchema, parseReturnType, parseFunctionDescription, parseReturnTypeSchema } from './tsParser';
+import { parseParameterSchema, parseReturnType, parseFunctionDescription, parseReturnTypeSchema, parseExportedFunctionName } from './tsParser';
 
 /**
  * Validates that the code has exactly one exported function
@@ -84,12 +84,14 @@ export function validateAndExtractSchema(code: string): {
   returnType: string | null;
   returnTypeSchema: ReturnTypeSchema | null;
   description: string | null;
+  functionName: string | null;
 } {
   const validation = validateFunctionCode(code);
   const parameters = extractParameterSchema(code);
   const returnType = extractReturnType(code);
   const returnTypeSchema = parseReturnTypeSchema(code);
   const description = extractFunctionDescription(code);
+  const functionName = parseExportedFunctionName(code);
 
   // Add warnings for missing schemas
   if (validation.isValid && !parameters) {
@@ -136,5 +138,6 @@ export function validateAndExtractSchema(code: string): {
     returnType,
     returnTypeSchema,
     description,
+    functionName,
   };
 }

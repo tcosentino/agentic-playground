@@ -11,16 +11,12 @@ interface FunctionEditorProps {
 
 export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
   const [localCode, setLocalCode] = useState('');
-  const [localName, setLocalName] = useState('');
-  const [localDescription, setLocalDescription] = useState('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Load function data when selection changes
   useEffect(() => {
     if (functionDef) {
       setLocalCode(functionDef.code);
-      setLocalName(functionDef.name);
-      setLocalDescription(functionDef.description);
       setHasUnsavedChanges(false);
     }
   }, [functionDef?.id]);
@@ -28,26 +24,20 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
   // Track unsaved changes
   useEffect(() => {
     if (functionDef) {
-      const hasChanges =
-        localCode !== functionDef.code ||
-        localName !== functionDef.name ||
-        localDescription !== functionDef.description;
+      const hasChanges = localCode !== functionDef.code;
       setHasUnsavedChanges(hasChanges);
     }
-  }, [localCode, localName, localDescription, functionDef]);
+  }, [localCode, functionDef]);
 
   const handleSave = () => {
     if (functionDef) {
       // Validate and extract schema before saving
-      const { validation, parameters, returnType, returnTypeSchema, description } = validateAndExtractSchema(localCode);
-
-      // Use extracted JSDoc description if available, otherwise use manual description
-      const finalDescription = description || localDescription;
+      const { validation, parameters, returnType, returnTypeSchema, description, functionName } = validateAndExtractSchema(localCode);
 
       onUpdate(functionDef.id, {
         code: localCode,
-        name: localName,
-        description: finalDescription,
+        name: functionName || functionDef.name,
+        description: description || '',
         validation,
         parameters: parameters || undefined,
         returnType: returnType || undefined,
@@ -60,8 +50,6 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
   const handleDiscard = () => {
     if (functionDef) {
       setLocalCode(functionDef.code);
-      setLocalName(functionDef.name);
-      setLocalDescription(functionDef.description);
       setHasUnsavedChanges(false);
     }
   };
@@ -83,20 +71,10 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
     <div className="function-editor">
       <div className="function-editor-header">
         <div className="function-editor-info">
-          <input
-            type="text"
-            className="function-name-input"
-            value={localName}
-            onChange={(e) => setLocalName(e.target.value)}
-            placeholder="Function name"
-          />
-          <input
-            type="text"
-            className="function-description-input"
-            value={localDescription}
-            onChange={(e) => setLocalDescription(e.target.value)}
-            placeholder="Description"
-          />
+          <div className="function-name-display">{functionDef.name}</div>
+          {functionDef.description && (
+            <div className="function-description-display">{functionDef.description}</div>
+          )}
         </div>
         <div className="function-editor-actions">
           {hasUnsavedChanges && (
@@ -117,6 +95,18 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
         </div>
       </div>
 
+      {functionDef.validation && functionDef.validation.errors.length > 0 && (
+        <div className="validation-errors-banner">
+          {functionDef.validation.errors.map((error, idx) => (
+            <div key={idx} className={`validation-error ${error.severity}`}>
+              <span className="error-severity">{error.severity.toUpperCase()}</span>
+              {error.line && <span className="error-line">Line {error.line}:</span>}
+              <span className="error-message">{error.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="function-editor-content">
         <Editor
           height="100%"
@@ -136,21 +126,6 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
           }}
         />
       </div>
-
-      {functionDef.validation && functionDef.validation.errors.length > 0 && (
-        <div className="function-editor-footer">
-          <div className="validation-errors">
-            <h4>Validation Messages:</h4>
-            {functionDef.validation.errors.map((error, idx) => (
-              <div key={idx} className={`validation-error ${error.severity}`}>
-                <span className="error-severity">{error.severity.toUpperCase()}</span>
-                {error.line && <span className="error-line">Line {error.line}:</span>}
-                <span className="error-message">{error.message}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
