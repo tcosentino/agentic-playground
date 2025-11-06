@@ -1,4 +1,5 @@
-import { FunctionValidation, ValidationError, ParameterSchema, ParameterProperty } from '../types/functions';
+import { FunctionValidation, ValidationError, ParameterSchema } from '../types/functions';
+import { parseParameterSchema, parseReturnType } from './tsParser';
 
 /**
  * Validates that the code has exactly one exported function
@@ -54,75 +55,17 @@ export function validateFunctionCode(code: string): FunctionValidation {
 }
 
 /**
- * Extracts parameter schema from TypeScript function signature
- * This is a simplified parser - in production, you'd use @typescript/compiler API
+ * Extracts parameter schema from TypeScript function signature using TS compiler API
  */
 export function extractParameterSchema(code: string): ParameterSchema | null {
-  // Match function signature with typed parameters
-  const functionRegex = /export\s+(?:async\s+)?function\s+\w+\s*\(\s*params\s*:\s*\{([^}]+)\}/;
-  const match = code.match(functionRegex);
-
-  if (!match) {
-    return null;
-  }
-
-  const paramsString = match[1];
-  const properties: Record<string, ParameterProperty> = {};
-  const required: string[] = [];
-
-  // Parse each parameter line
-  const paramLines = paramsString.split(/[,;]/).map(l => l.trim()).filter(l => l);
-
-  for (const line of paramLines) {
-    const paramMatch = line.match(/(\w+)(\?)?:\s*([\w\[\]<>]+)(?:\/\/\s*(.*))?/);
-    if (paramMatch) {
-      const [, name, optional, type, comment] = paramMatch;
-
-      properties[name] = {
-        type: mapTypeScriptTypeToJsonSchema(type),
-        description: comment?.trim() || '',
-      };
-
-      if (!optional) {
-        required.push(name);
-      }
-    }
-  }
-
-  return {
-    type: 'object',
-    properties,
-    required,
-  };
+  return parseParameterSchema(code);
 }
 
 /**
- * Maps TypeScript types to JSON Schema types
- */
-function mapTypeScriptTypeToJsonSchema(tsType: string): ParameterProperty['type'] {
-  const normalized = tsType.toLowerCase().replace(/\s/g, '');
-
-  if (normalized.includes('string')) return 'string';
-  if (normalized.includes('number')) return 'number';
-  if (normalized.includes('boolean')) return 'boolean';
-  if (normalized.includes('[]') || normalized.includes('array')) return 'array';
-
-  return 'object';
-}
-
-/**
- * Extracts return type from TypeScript function signature
+ * Extracts return type from TypeScript function signature using TS compiler API
  */
 export function extractReturnType(code: string): string | null {
-  // Match Promise<Type> or Type return types
-  const returnTypeRegex = /export\s+(?:async\s+)?function\s+\w+\s*\([^)]*\)\s*:\s*(?:Promise<)?([^>{]+)>?/;
-  const match = code.match(returnTypeRegex);
-
-  if (match) {
-    return match[1].trim();
-  }
-
-  return null;
+  return parseReturnType(code);
 }
 
 /**
