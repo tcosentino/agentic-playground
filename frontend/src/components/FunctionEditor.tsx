@@ -116,7 +116,7 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
       <div className="function-editor-content">
         <Editor
           height="100%"
-          defaultLanguage="javascript"
+          defaultLanguage="typescript"
           value={localCode}
           onChange={(value) => setLocalCode(value || '')}
           theme="vs-dark"
