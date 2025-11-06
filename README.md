@@ -57,7 +57,7 @@ agentic-playground/
 
    Edit `backend/.env` and add your API keys:
    ```
-   PORT=3001
+   PORT=3002
    ANTHROPIC_API_KEY=your_anthropic_api_key_here
    OPENAI_API_KEY=your_openai_api_key_here
    ```
@@ -68,11 +68,11 @@ agentic-playground/
    ```
 
    This will start:
-   - Backend API server on `http://localhost:3001`
-   - Frontend dev server on `http://localhost:5173`
+   - Backend API server on `http://localhost:3002`
+   - Frontend dev server on `http://localhost:5174`
 
 4. **Open the app**:
-   Navigate to `http://localhost:5173` in your browser
+   Navigate to `http://localhost:5174` in your browser
 
 ## Usage
 
@@ -107,7 +107,7 @@ The backend exposes the following endpoints:
 ### Example Request
 
 ```bash
-curl -X POST http://localhost:3001/api/ai/chat \
+curl -X POST http://localhost:3002/api/ai/chat \
   -H "Content-Type: application/json" \
   -d '{
     "provider": "anthropic",

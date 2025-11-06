@@ -14,14 +14,27 @@ export const clearHistory = () => {
   history.length = 0;
 };
 
-// Initialize API clients
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || '',
-});
+// Initialize API clients lazily to ensure env vars are loaded
+let anthropic: Anthropic | null = null;
+let openai: OpenAI | null = null;
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-});
+const getAnthropicClient = () => {
+  if (!anthropic) {
+    anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return anthropic;
+};
+
+const getOpenAIClient = () => {
+  if (!openai) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+};
 
 router.post('/chat', async (req, res) => {
   try {
@@ -42,7 +55,7 @@ router.post('/chat', async (req, res) => {
       console.log('=== ANTHROPIC REQUEST ===');
       console.log(JSON.stringify(anthropicRequest, null, 2));
 
-      const response = await anthropic.messages.create(anthropicRequest);
+      const response = await getAnthropicClient().messages.create(anthropicRequest);
 
       console.log('=== ANTHROPIC RESPONSE ===');
       console.log(JSON.stringify(response, null, 2));
@@ -78,7 +91,7 @@ router.post('/chat', async (req, res) => {
       console.log('=== OPENAI REQUEST ===');
       console.log(JSON.stringify(openaiRequest, null, 2));
 
-      const response = await openai.chat.completions.create(openaiRequest);
+      const response = await getOpenAIClient().chat.completions.create(openaiRequest);
 
       console.log('=== OPENAI RESPONSE ===');
       console.log(JSON.stringify(response, null, 2));

@@ -13,22 +13,66 @@ body {
 }
 
 .app {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100vh;
 }
 
 h1 {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   color: #fff;
   font-size: 2rem;
 }
 
-.container {
+/* Top request panel - full width */
+.request-panel {
+  width: 100%;
+}
+
+.request-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-columns {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 20px;
+}
+
+.form-column-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row-inline {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.tall-textarea {
+  min-height: 120px !important;
+  height: 100%;
+}
+
+/* Bottom container - history left, response right */
+.bottom-container {
+  display: grid;
+  grid-template-columns: 350px 1fr;
   gap: 20px;
-  margin-bottom: 20px;
+  flex: 1;
+  overflow: hidden;
 }
 
 .panel {
@@ -70,12 +114,12 @@ textarea {
 
 textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
 
 input[type="number"] {
-  max-width: 150px;
+  width: 100%;
 }
 
 button {
@@ -87,6 +131,7 @@ button {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 100%;
 }
 
 button:hover {
@@ -113,8 +158,10 @@ button.secondary:hover {
   border-radius: 4px;
   border: 1px solid #444;
   margin-top: 10px;
-  max-height: 400px;
   overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .response-content h3 {
@@ -139,24 +186,33 @@ button.secondary:hover {
 }
 
 .history-panel {
-  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  max-height: 600px;
+  gap: 10px;
   overflow-y: auto;
+  flex: 1;
+}
+
+.response-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .history-item {
   background-color: #1a1a1a;
-  padding: 15px;
+  padding: 12px;
   border-radius: 4px;
   border: 1px solid #444;
   cursor: pointer;
   transition: border-color 0.2s;
+  flex-shrink: 0;
 }
 
 .history-item:hover {
@@ -177,8 +233,9 @@ button.secondary:hover {
 
 .history-meta {
   display: flex;
-  gap: 15px;
-  font-size: 0.9rem;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.85rem;
   color: #888;
 }
 
@@ -200,11 +257,14 @@ button.secondary:hover {
 }
 
 .history-content {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #b0b0b0;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
 }
 
 .loading {
@@ -251,4 +311,72 @@ button.secondary:hover {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+}
+
+/* React Select dark theme styling */
+.react-select__control {
+  background-color: #1a1a1a !important;
+  border-color: #444 !important;
+  min-height: 38px !important;
+}
+
+.react-select__control:hover {
+  border-color: #666 !important;
+}
+
+.react-select__control--is-focused {
+  border-color: #4a9eff !important;
+  box-shadow: 0 0 0 1px #4a9eff !important;
+}
+
+.react-select__menu {
+  background-color: #2a2a2a !important;
+  border: 1px solid #444 !important;
+}
+
+.react-select__option {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  cursor: pointer !important;
+}
+
+.react-select__option:hover {
+  background-color: #3a3a3a !important;
+}
+
+.react-select__option--is-focused {
+  background-color: #3a3a3a !important;
+}
+
+.react-select__option--is-selected {
+  background-color: #4a9eff !important;
+  color: white !important;
+}
+
+.react-select__single-value {
+  color: #e0e0e0 !important;
+}
+
+.react-select__input-container {
+  color: #e0e0e0 !important;
+}
+
+.react-select__input {
+  color: #e0e0e0 !important;
+}
+
+.react-select__placeholder {
+  color: #888 !important;
+}
+
+.react-select__indicator-separator {
+  background-color: #444 !important;
+}
+
+.react-select__dropdown-indicator {
+  color: #888 !important;
+}
+
+.react-select__dropdown-indicator:hover {
+  color: #e0e0e0 !important;
 }
