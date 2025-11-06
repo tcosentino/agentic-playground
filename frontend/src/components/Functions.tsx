@@ -1,6 +1,7 @@
 import { useFunctions } from '../hooks/useFunctions';
 import { FunctionList } from './FunctionList';
 import { FunctionEditor } from './FunctionEditor';
+import { toOpenAISchema, toAnthropicSchema } from '../utils/toolSchema';
 import './Functions.css';
 
 export function Functions() {
@@ -87,6 +88,26 @@ export function Functions() {
             </div>
           </div>
         ) : null}
+
+        {selectedFunction && (
+          <div className="sidebar-section">
+            <h3>API Schemas</h3>
+            <div className="schema-tabs">
+              <div className="schema-tab">
+                <div className="schema-tab-header">OpenAI</div>
+                <pre className="schema-preview">
+                  {JSON.stringify(toOpenAISchema(selectedFunction), null, 2)}
+                </pre>
+              </div>
+              <div className="schema-tab">
+                <div className="schema-tab-header">Anthropic</div>
+                <pre className="schema-preview">
+                  {JSON.stringify(toAnthropicSchema(selectedFunction), null, 2)}
+                </pre>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
