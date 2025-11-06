@@ -23,9 +23,40 @@ body {
 }
 
 h1 {
-  margin-bottom: 10px;
+  margin: 0;
   color: #fff;
   font-size: 2rem;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.nav {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  color: #888;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #e0e0e0;
+  background-color: rgba(74, 158, 255, 0.1);
+}
+
+.nav-link.active {
+  color: #4a9eff;
+  background-color: rgba(74, 158, 255, 0.15);
 }
 
 /* Top request panel - full width */

@@ -1,0 +1,40 @@
+.functions-container {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 20px;
+  height: calc(100vh - 180px);
+  min-height: 600px;
+}
+
+.functions-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.functions-main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+@media (max-width: 1024px) {
+  .functions-container {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .functions-container {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .functions-sidebar {
+    height: 400px;
+  }
+
+  .functions-main {
+    height: 600px;
+  }
+}

@@ -1,0 +1,116 @@
+.function-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.function-editor-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+}
+
+.function-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 15px 20px;
+  border-bottom: 1px solid #444;
+  gap: 20px;
+}
+
+.function-editor-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.function-name-input {
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.function-description-input {
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  background-color: #1a1a1a;
+  color: #b0b0b0;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+.function-name-input:focus,
+.function-description-input:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.function-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.unsaved-indicator {
+  font-size: 0.85rem;
+  color: #f59e0b;
+  font-style: italic;
+}
+
+.function-editor-actions button {
+  padding: 8px 16px;
+  white-space: nowrap;
+}
+
+.function-editor-actions button.save-active {
+  background-color: #10b981;
+}
+
+.function-editor-actions button.save-active:hover {
+  background-color: #059669;
+}
+
+.function-editor-actions button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.function-editor-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.function-editor-footer {
+  padding: 10px 20px;
+  border-top: 1px solid #444;
+  background-color: #1a1a1a;
+}
+
+.function-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.function-meta span {
+  display: flex;
+  align-items: center;
+}
