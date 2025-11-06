@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { FunctionDefinition } from '../types/functions';
 import { validateAndExtractSchema } from '../utils/functionValidator';
-import { addJSDocToCode, updateJSDoc } from '../utils/autoFix';
+import { addJSDocToCode, updateJSDoc, addParameterTypes, addReturnType } from '../utils/autoFix';
 import './FunctionEditor.css';
 
 interface FunctionEditorProps {
@@ -55,12 +55,18 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
     }
   };
 
-  const handleAutoFix = (fixType: 'add-jsdoc' | 'update-jsdoc') => {
+  const handleAutoFix = (fixType: 'add-jsdoc' | 'update-jsdoc' | 'add-param-types' | 'add-return-type') => {
     if (fixType === 'add-jsdoc') {
       const fixedCode = addJSDocToCode(localCode);
       setLocalCode(fixedCode);
     } else if (fixType === 'update-jsdoc') {
       const fixedCode = updateJSDoc(localCode);
+      setLocalCode(fixedCode);
+    } else if (fixType === 'add-param-types') {
+      const fixedCode = addParameterTypes(localCode);
+      setLocalCode(fixedCode);
+    } else if (fixType === 'add-return-type') {
+      const fixedCode = addReturnType(localCode);
       setLocalCode(fixedCode);
     }
   };
@@ -128,6 +134,26 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
                   className="auto-fix-btn"
                   onClick={() => handleAutoFix('update-jsdoc')}
                   title="Add missing @param tags"
+                >
+                  Fix
+                </button>
+              );
+            } else if (error.message.includes('No parameter schema detected')) {
+              fixButton = (
+                <button
+                  className="auto-fix-btn"
+                  onClick={() => handleAutoFix('add-param-types')}
+                  title="Add parameter type annotation"
+                >
+                  Fix
+                </button>
+              );
+            } else if (error.message.includes('No return type annotation found')) {
+              fixButton = (
+                <button
+                  className="auto-fix-btn"
+                  onClick={() => handleAutoFix('add-return-type')}
+                  title="Add return type annotation"
                 >
                   Fix
                 </button>

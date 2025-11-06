@@ -1,6 +1,92 @@
 import ts from 'typescript';
 
 /**
+ * Adds parameter type annotation to function if missing
+ */
+export function addParameterTypes(code: string): string {
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    code,
+    ts.ScriptTarget.Latest,
+    true
+  );
+
+  let updatedCode = code;
+
+  function visit(node: ts.Node) {
+    if (ts.isFunctionDeclaration(node) && node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      const firstParam = node.parameters[0];
+
+      // Check if first parameter exists but has no type
+      if (firstParam && !firstParam.type) {
+        // Find the parameter in the original code
+        const paramStart = firstParam.pos;
+        const paramEnd = firstParam.end;
+        const paramText = sourceFile.getFullText().substring(paramStart, paramEnd).trim();
+
+        // Add type annotation
+        const newParamText = `${paramText}: {\n  // Add your parameter properties here\n  // propertyName: type;\n}`;
+
+        const before = updatedCode.substring(0, paramStart);
+        const after = updatedCode.substring(paramEnd);
+        updatedCode = before + newParamText + after;
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return updatedCode;
+}
+
+/**
+ * Adds return type annotation to function if missing
+ */
+export function addReturnType(code: string): string {
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    code,
+    ts.ScriptTarget.Latest,
+    true
+  );
+
+  let updatedCode = code;
+
+  function visit(node: ts.Node) {
+    if (ts.isFunctionDeclaration(node) && node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      // Check if return type is missing
+      if (!node.type) {
+        // Find where to insert the return type (after the closing parenthesis)
+        const body = node.body;
+        if (body) {
+          const bodyStart = body.pos;
+          const fullText = sourceFile.getFullText();
+
+          // Find the ) before the body
+          let insertPos = bodyStart;
+          for (let i = bodyStart - 1; i >= 0; i--) {
+            if (fullText[i] === ')') {
+              insertPos = i + 1;
+              break;
+            }
+          }
+
+          const returnTypeAnnotation = ': Promise<{\n  // Add your return type properties here\n  // propertyName: type;\n}>';
+
+          const before = updatedCode.substring(0, insertPos);
+          const after = updatedCode.substring(insertPos);
+          updatedCode = before + returnTypeAnnotation + after;
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return updatedCode;
+}
+
+/**
  * Generates JSDoc comment for a function based on its signature
  */
 export function generateJSDoc(code: string): string | null {
