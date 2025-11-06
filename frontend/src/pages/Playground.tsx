@@ -289,8 +289,20 @@ export default function Playground() {
                     </div>
                   </div>
                   <div className="history-content">
-                    {item.response.content.substring(0, 100)}
-                    {item.response.content.length > 100 ? '...' : ''}
+                    {item.response.toolUses && item.response.toolUses.length > 0 ? (
+                      <div className="history-tool-calls">
+                        {item.response.toolUses.map((toolUse) => (
+                          <span key={toolUse.id} className="history-tool-badge">
+                            {toolUse.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <>
+                        {item.response.content.substring(0, 100)}
+                        {item.response.content.length > 100 ? '...' : ''}
+                      </>
+                    )}
                   </div>
                 </div>
               ))
