@@ -104,6 +104,30 @@ export function validateAndExtractSchema(code: string): {
     });
   }
 
+  // Add warning for missing JSDoc description
+  if (validation.isValid && !description) {
+    validation.errors.push({
+      message: 'No JSDoc description found. Add a /** ... */ comment above the function.',
+      severity: 'warning',
+    });
+  }
+
+  // Add warnings for missing parameter descriptions
+  if (validation.isValid && parameters) {
+    const missingDescriptions: string[] = [];
+    for (const [paramName, param] of Object.entries(parameters.properties)) {
+      if (!param.description || param.description.trim() === '') {
+        missingDescriptions.push(paramName);
+      }
+    }
+    if (missingDescriptions.length > 0) {
+      validation.errors.push({
+        message: `Missing JSDoc descriptions for parameters: ${missingDescriptions.join(', ')}. Add @param tags in JSDoc comment.`,
+        severity: 'warning',
+      });
+    }
+  }
+
   return {
     validation,
     parameters,
