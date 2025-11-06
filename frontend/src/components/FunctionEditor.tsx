@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { FunctionDefinition } from '../types/functions';
 import { validateAndExtractSchema } from '../utils/functionValidator';
+import { addJSDocToCode, updateJSDoc } from '../utils/autoFix';
 import './FunctionEditor.css';
 
 interface FunctionEditorProps {
@@ -54,6 +55,16 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
     }
   };
 
+  const handleAutoFix = (fixType: 'add-jsdoc' | 'update-jsdoc') => {
+    if (fixType === 'add-jsdoc') {
+      const fixedCode = addJSDocToCode(localCode);
+      setLocalCode(fixedCode);
+    } else if (fixType === 'update-jsdoc') {
+      const fixedCode = updateJSDoc(localCode);
+      setLocalCode(fixedCode);
+    }
+  };
+
   if (!functionDef) {
     return (
       <div className="function-editor-empty">
@@ -97,13 +108,43 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
 
       {functionDef.validation && functionDef.validation.errors.length > 0 && (
         <div className="validation-errors-banner">
-          {functionDef.validation.errors.map((error, idx) => (
-            <div key={idx} className={`validation-error ${error.severity}`}>
-              <span className="error-severity">{error.severity.toUpperCase()}</span>
-              {error.line && <span className="error-line">Line {error.line}:</span>}
-              <span className="error-message">{error.message}</span>
-            </div>
-          ))}
+          {functionDef.validation.errors.map((error, idx) => {
+            // Determine if this error is auto-fixable
+            let fixButton: JSX.Element | null = null;
+
+            if (error.message.includes('No JSDoc description found')) {
+              fixButton = (
+                <button
+                  className="auto-fix-btn"
+                  onClick={() => handleAutoFix('add-jsdoc')}
+                  title="Auto-generate JSDoc comment"
+                >
+                  Fix
+                </button>
+              );
+            } else if (error.message.includes('Missing JSDoc descriptions for parameters')) {
+              fixButton = (
+                <button
+                  className="auto-fix-btn"
+                  onClick={() => handleAutoFix('update-jsdoc')}
+                  title="Add missing @param tags"
+                >
+                  Fix
+                </button>
+              );
+            }
+
+            return (
+              <div key={idx} className={`validation-error ${error.severity}`}>
+                <div className="validation-error-content">
+                  <span className="error-severity">{error.severity.toUpperCase()}</span>
+                  {error.line && <span className="error-line">Line {error.line}:</span>}
+                  <span className="error-message">{error.message}</span>
+                </div>
+                {fixButton}
+              </div>
+            );
+          })}
         </div>
       )}
 

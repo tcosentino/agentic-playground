@@ -131,8 +131,9 @@
   border-radius: 2px;
   font-size: 11px;
   display: flex;
-  align-items: flex-start;
-  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .validation-error.error {
@@ -145,6 +146,32 @@
   background-color: rgba(245, 158, 11, 0.1);
   border-left: 2px solid #f59e0b;
   color: #f59e0b;
+}
+
+.validation-error-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.auto-fix-btn {
+  padding: 2px 8px;
+  font-size: 10px;
+  background-color: #0e639c;
+  color: white;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.1s;
+  flex-shrink: 0;
+  width: auto;
+}
+
+.auto-fix-btn:hover {
+  background-color: #1177bb;
 }
 
 .validation-error-icon {
