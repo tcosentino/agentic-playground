@@ -25,6 +25,13 @@ export interface FunctionValidation {
   errors: ValidationError[];
 }
 
+export interface ReturnTypeSchema {
+  [key: string]: {
+    type: string;
+    description?: string;
+  };
+}
+
 export interface FunctionDefinition {
   id: string;
   name: string;
@@ -32,6 +39,7 @@ export interface FunctionDefinition {
   code: string;
   parameters?: ParameterSchema;
   returnType?: string;
+  returnTypeSchema?: ReturnTypeSchema;
   validation?: FunctionValidation;
   createdAt: string;
   updatedAt: string;

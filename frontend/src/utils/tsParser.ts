@@ -169,6 +169,64 @@ export function parseReturnType(code: string): string | null {
 }
 
 /**
+ * Parses the return type schema, extracting properties from Promise<{ ... }> types
+ */
+export function parseReturnTypeSchema(code: string): Record<string, { type: string; description?: string }> | null {
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    code,
+    ts.ScriptTarget.Latest,
+    true
+  );
+
+  let returnSchema: Record<string, { type: string; description?: string }> | null = null;
+
+  function visit(node: ts.Node) {
+    if (ts.isFunctionDeclaration(node) && node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      if (!node.type) return;
+
+      let typeNode: ts.TypeNode = node.type;
+
+      // Unwrap Promise<...> if present
+      if (ts.isTypeReferenceNode(typeNode) && typeNode.typeName.getText(sourceFile) === 'Promise') {
+        if (typeNode.typeArguments && typeNode.typeArguments.length > 0) {
+          typeNode = typeNode.typeArguments[0];
+        }
+      }
+
+      // Parse type literal (object type)
+      if (ts.isTypeLiteralNode(typeNode)) {
+        returnSchema = {};
+        for (const member of typeNode.members) {
+          if (ts.isPropertySignature(member) && member.name && ts.isIdentifier(member.name)) {
+            const propName = member.name.text;
+            const propType = member.type ? mapTsTypeToJsonSchema(member.type, sourceFile) : 'string';
+
+            // Try to get inline comment description
+            let description = '';
+            const fullText = sourceFile.getFullText();
+            const memberText = fullText.substring(member.pos, member.end);
+            const commentMatch = memberText.match(/\/\/\s*(.+)/);
+            if (commentMatch) {
+              description = commentMatch[1].trim();
+            }
+
+            returnSchema[propName] = {
+              type: propType,
+              ...(description && { description }),
+            };
+          }
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return returnSchema;
+}
+
+/**
  * Gets the exported function name using TypeScript compiler API
  */
 export function parseExportedFunctionName(code: string): string | null {

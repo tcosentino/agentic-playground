@@ -62,14 +62,31 @@ export function Functions() {
           )}
         </div>
 
-        {selectedFunction?.returnType && (
+        {selectedFunction?.returnTypeSchema && Object.keys(selectedFunction.returnTypeSchema).length > 0 ? (
+          <div className="sidebar-section">
+            <h3>Return Type</h3>
+            <div className="parameters-panel">
+              {Object.entries(selectedFunction.returnTypeSchema).map(([name, prop]) => (
+                <div key={name} className="parameter-item">
+                  <div className="parameter-header">
+                    <span className="parameter-name">{name}</span>
+                  </div>
+                  <div className="parameter-type">{prop.type}</div>
+                  {prop.description && (
+                    <div className="parameter-description">{prop.description}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : selectedFunction?.returnType ? (
           <div className="sidebar-section">
             <h3>Return Type</h3>
             <div className="return-type-display">
               <code>{selectedFunction.returnType}</code>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
