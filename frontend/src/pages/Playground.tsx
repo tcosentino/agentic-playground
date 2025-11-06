@@ -6,8 +6,6 @@ import { generateAnthropicToolSchema } from '../utils/schemaGenerator';
 
 const STORAGE_KEY = 'ai-playground-functions';
 
-type Tab = 'content' | 'request' | 'response';
-
 interface ModelOption {
   value: string;
   label: string;
@@ -38,7 +36,6 @@ export default function Playground() {
   const [currentResponse, setCurrentResponse] = useState<AIResponse | null>(null);
   const [history, setHistory] = useState<AIResponse[]>([]);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<Tab>('content');
   const [availableFunctions, setAvailableFunctions] = useState<FunctionDefinition[]>([]);
   const [selectedFunctionIds, setSelectedFunctionIds] = useState<string[]>([]);
 
@@ -165,6 +162,12 @@ export default function Playground() {
                   id="message"
                   value={userMessage}
                   onChange={(e) => setUserMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                      e.preventDefault();
+                      handleSubmit(e as any);
+                    }
+                  }}
                   placeholder="Enter your message..."
                   required
                   className="tall-textarea"
@@ -297,52 +300,61 @@ export default function Playground() {
 
         {/* Response Panel */}
         <div className="panel response-panel">
-          <h2>Response</h2>
+          <div className="response-header">
+            <h2>Response</h2>
+            {displayedResponse?.response.stopReason && (
+              <span className="stop-reason-badge">
+                {displayedResponse.response.stopReason}
+              </span>
+            )}
+          </div>
           {loading && <p className="loading">Waiting for response...</p>}
           {error && <div className="error">{error}</div>}
           {displayedResponse && (
             <div className="response-content">
-              <div className="tabs">
-                <button
-                  className={`tab ${activeTab === 'content' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('content')}
-                >
-                  Content
-                </button>
-                <button
-                  className={`tab ${activeTab === 'request' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('request')}
-                >
-                  Raw Request
-                </button>
-                <button
-                  className={`tab ${activeTab === 'response' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('response')}
-                >
-                  Raw Response
-                </button>
+              {/* Content Section - Always visible on top */}
+              <div className="content-section">
+                {displayedResponse.response.content && (
+                  <div className="response-text">
+                    <div className="text-content">{displayedResponse.response.content}</div>
+                  </div>
+                )}
+
+                {displayedResponse.response.toolUses && displayedResponse.response.toolUses.length > 0 && (
+                  <div className="tool-uses">
+                    <h4>Tool Calls ({displayedResponse.response.toolUses.length})</h4>
+                    {displayedResponse.response.toolUses.map((toolUse) => (
+                      <div key={toolUse.id} className="tool-use-block">
+                        <div className="tool-use-header">
+                          <span className="tool-use-name">{toolUse.name}</span>
+                          <span className="tool-use-id">{toolUse.id}</span>
+                        </div>
+                        <div className="tool-use-input">
+                          <strong>Input:</strong>
+                          <pre className="code-box">{JSON.stringify(toolUse.input, null, 2)}</pre>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {!displayedResponse.response.content &&
+                 (!displayedResponse.response.toolUses || displayedResponse.response.toolUses.length === 0) && (
+                  <p style={{ color: '#888' }}>No content in response</p>
+                )}
               </div>
 
-              {activeTab === 'content' && (
-                <div>
-                  <h3>AI Response</h3>
-                  <pre>{displayedResponse.response.content}</pre>
+              {/* Raw Data Section - Two columns below */}
+              <div className="raw-data-section">
+                <div className="raw-column">
+                  <h3>Raw Request</h3>
+                  <pre className="code-box">{displayedResponse.request.formatted}</pre>
                 </div>
-              )}
-
-              {activeTab === 'request' && (
-                <div>
-                  <h3>Request Payload</h3>
-                  <pre>{displayedResponse.request.formatted}</pre>
+                <div className="raw-column">
+                  <h3>Raw Response</h3>
+                  <pre className="code-box">{displayedResponse.response.formatted}</pre>
                 </div>
-              )}
-
-              {activeTab === 'response' && (
-                <div>
-                  <h3>Response Payload</h3>
-                  <pre>{displayedResponse.response.formatted}</pre>
-                </div>
-              )}
+              </div>
 
               <div className="duration">
                 Duration: {displayedResponse.duration}ms

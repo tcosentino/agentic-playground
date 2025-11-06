@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../app.js';
-import { clearHistory } from '../routes/ai.js';
+import { clearHistoryData, setStorage } from '../routes/ai.js';
+import { FileStorage } from '../storage/index.js';
 
 // Mock the AI SDKs
 vi.mock('@anthropic-ai/sdk', () => {
@@ -29,8 +30,15 @@ vi.mock('openai', () => {
 describe('AI Routes', () => {
   const app = createApp();
 
-  beforeEach(() => {
-    clearHistory();
+  beforeAll(async () => {
+    // Initialize storage for tests
+    const storage = new FileStorage();
+    await storage.initialize();
+    setStorage(storage);
+  });
+
+  beforeEach(async () => {
+    await clearHistoryData();
   });
 
   describe('GET /api/ai/history', () => {

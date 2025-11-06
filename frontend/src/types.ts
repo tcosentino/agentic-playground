@@ -20,6 +20,12 @@ export interface AIRequest {
   }>;
 }
 
+export interface ToolUse {
+  id: string;
+  name: string;
+  input: Record<string, any>;
+}
+
 export interface AIResponse {
   id: string;
   timestamp: string;
@@ -32,6 +38,8 @@ export interface AIResponse {
     raw: any;
     formatted: string;
     content: string;
+    toolUses?: ToolUse[];
+    stopReason?: string;
   };
   duration: number;
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FunctionDefinition } from '../types/functions';
+import { validateAndExtractSchema } from '../utils/functionValidator';
 
 const STORAGE_KEY = 'ai-playground-functions';
 
@@ -34,12 +35,7 @@ export async function ${name}(params: {
 function getExampleFunctions(): FunctionDefinition[] {
   const now = new Date().toISOString();
 
-  return [
-    {
-      id: crypto.randomUUID(),
-      name: 'getCurrentWeather',
-      description: 'Get the current weather for a location',
-      code: `/**
+  const weatherCode = `/**
  * Get the current weather for a specific location
  */
 export async function getCurrentWeather(params: {
@@ -66,15 +62,9 @@ export async function getCurrentWeather(params: {
     humidity: data.humidity,
     windSpeed: data.wind_speed
   };
-}`,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: 'searchDatabase',
-      description: 'Search through a database of records',
-      code: `/**
+}`;
+
+  const searchCode = `/**
  * Search through database records with filters
  */
 export async function searchDatabase(params: {
@@ -104,15 +94,9 @@ export async function searchDatabase(params: {
     totalCount: data.total,
     page: data.page
   };
-}`,
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: crypto.randomUUID(),
-      name: 'sendEmail',
-      description: 'Send an email message',
-      code: `/**
+}`;
+
+  const emailCode = `/**
  * Send an email to one or more recipients
  */
 export async function sendEmail(params: {
@@ -143,7 +127,44 @@ export async function sendEmail(params: {
     messageId: data.id,
     timestamp: new Date().toISOString()
   };
-}`,
+}`;
+
+  // Validate and extract schemas for each example
+  const weatherSchema = validateAndExtractSchema(weatherCode);
+  const searchSchema = validateAndExtractSchema(searchCode);
+  const emailSchema = validateAndExtractSchema(emailCode);
+
+  return [
+    {
+      id: crypto.randomUUID(),
+      name: 'getCurrentWeather',
+      description: 'Get the current weather for a location',
+      code: weatherCode,
+      validation: weatherSchema.validation,
+      parameters: weatherSchema.parameters || undefined,
+      returnType: weatherSchema.returnType || undefined,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: 'searchDatabase',
+      description: 'Search through a database of records',
+      code: searchCode,
+      validation: searchSchema.validation,
+      parameters: searchSchema.parameters || undefined,
+      returnType: searchSchema.returnType || undefined,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      id: crypto.randomUUID(),
+      name: 'sendEmail',
+      description: 'Send an email message',
+      code: emailCode,
+      validation: emailSchema.validation,
+      parameters: emailSchema.parameters || undefined,
+      returnType: emailSchema.returnType || undefined,
       createdAt: now,
       updatedAt: now,
     },
@@ -218,6 +239,12 @@ export function useFunctions() {
     return functions.find((fn) => fn.id === id);
   };
 
+  const loadExamples = () => {
+    const examples = getExampleFunctions();
+    setFunctions(examples);
+    setSelectedFunctionId(examples[0]?.id || null);
+  };
+
   const selectedFunction = selectedFunctionId
     ? getFunction(selectedFunctionId)
     : null;
@@ -231,5 +258,6 @@ export function useFunctions() {
     updateFunction,
     deleteFunction,
     getFunction,
+    loadExamples,
   };
 }

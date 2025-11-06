@@ -13,7 +13,7 @@ body {
 }
 
 .app {
-  max-width: 1600px;
+  max-width: 2000px;
   margin: 0 auto;
   padding: 20px;
   display: flex;
@@ -233,11 +233,6 @@ button.secondary:hover {
 }
 
 .response-content {
-  background-color: #1a1a1a;
-  padding: 15px;
-  border-radius: 4px;
-  border: 1px solid #444;
-  margin-top: 10px;
   overflow-y: auto;
   flex: 1;
   display: flex;
@@ -360,30 +355,48 @@ button.secondary:hover {
   margin-top: 10px;
 }
 
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #444;
-}
+/* Response content layout */
 
-.tab {
-  padding: 10px 20px;
-  background: none;
-  border: none;
+.content-section h3 {
   color: #888;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
-.tab:hover {
+.content-section h4 {
   color: #e0e0e0;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 1rem;
 }
 
-.tab.active {
-  color: #4a9eff;
-  border-bottom-color: #4a9eff;
+.raw-data-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.raw-column {
+  min-width: 0; /* Allows the column to shrink below its content size */
+}
+
+.raw-column h3 {
+  color: #888;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.raw-column pre {
+  overflow: auto;
+}
+
+/* Make raw data stack vertically on smaller screens */
+@media (max-width: 1400px) {
+  .raw-data-section {
+    grid-template-columns: 1fr;
+  }
 }
 
 .header {
@@ -459,4 +472,97 @@ button.secondary:hover {
 
 .react-select__dropdown-indicator:hover {
   color: #e0e0e0 !important;
+}
+
+/* Response header with stop reason */
+.response-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.stop-reason-badge {
+  padding: 4px 12px;
+  background-color: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #f59e0b;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: -10px;
+  letter-spacing: 0.5px;
+}
+
+.text-content {
+  padding: 15px;
+  background-color: transparent;
+  color: #e0e0e0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.tool-uses {
+  margin-top: 20px;
+}
+
+.tool-uses h3 {
+  color: #10b981;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.tool-use-block {
+  background-color: #1a1a1a;
+  border: 1px solid #10b981;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.tool-use-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.tool-use-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #10b981;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.tool-use-id {
+  font-size: 0.8rem;
+  color: #666;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.tool-use-input {
+  margin-top: 10px;
+}
+
+.tool-use-input strong {
+  color: #888;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Code boxes for JSON/code content */
+.code-box {
+  background-color: #0d0d0d;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #333;
+  margin: 0;
+  overflow-x: auto;
+  color: #d1d5db;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
 }
