@@ -3,6 +3,31 @@ import { FunctionDefinition } from '../types/functions';
 
 const STORAGE_KEY = 'ai-playground-functions';
 
+/**
+ * Returns an example function template with proper TypeScript typing
+ */
+function getExampleTemplate(name: string, description: string): string {
+  return `/**
+ * ${description || 'Function description'}
+ */
+export async function ${name}(params: {
+  query: string; // The search query
+  maxResults?: number; // Maximum number of results to return
+}): Promise<{ success: boolean; data: any }> {
+  // Your implementation here
+  const { query, maxResults = 10 } = params;
+
+  // Example: call an API, process data, etc.
+  const results = await fetch(\`https://api.example.com/search?q=\${query}&limit=\${maxResults}\`);
+  const data = await results.json();
+
+  return {
+    success: true,
+    data
+  };
+}`;
+}
+
 export function useFunctions() {
   const [functions, setFunctions] = useState<FunctionDefinition[]>([]);
   const [selectedFunctionId, setSelectedFunctionId] = useState<string | null>(null);
@@ -30,7 +55,7 @@ export function useFunctions() {
       id: crypto.randomUUID(),
       name,
       description,
-      code: `function ${name}() {\n  // Your code here\n  \n}`,
+      code: getExampleTemplate(name, description),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

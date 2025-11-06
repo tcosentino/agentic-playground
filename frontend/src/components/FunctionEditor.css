@@ -98,9 +98,134 @@
 }
 
 .function-editor-footer {
-  padding: 10px 20px;
+  padding: 15px 20px;
   border-top: 1px solid #444;
   background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.validation-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.validation-errors h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+}
+
+.validation-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.validation-error.error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #ef4444;
+}
+
+.validation-error.warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid #f59e0b;
+}
+
+.error-severity {
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.validation-error.error .error-severity {
+  color: #ef4444;
+}
+
+.validation-error.warning .error-severity {
+  color: #f59e0b;
+}
+
+.error-line {
+  color: #888;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+.error-message {
+  color: #e0e0e0;
+}
+
+.schema-info,
+.return-type-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.schema-info h4,
+.return-type-info h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #4a9eff;
+}
+
+.schema-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.param-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background-color: #2a2a2a;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.param-name {
+  color: #10b981;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-weight: 600;
+}
+
+.param-type {
+  color: #60a5fa;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  padding: 2px 6px;
+  background-color: rgba(96, 165, 250, 0.1);
+  border-radius: 3px;
+}
+
+.param-required {
+  color: #f59e0b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.param-description {
+  color: #888;
+  flex: 1;
+}
+
+.return-type-info code {
+  color: #10b981;
+  background-color: #2a2a2a;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.85rem;
+  display: block;
 }
 
 .function-meta {
@@ -108,6 +233,7 @@
   gap: 20px;
   font-size: 0.75rem;
   color: #888;
+  margin-top: 5px;
 }
 
 .function-meta span {
