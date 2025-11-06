@@ -8,55 +8,60 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  background-color: #1a1a1a;
-  color: #e0e0e0;
+  background-color: #1e1e1e;
+  color: #cccccc;
+  font-size: 13px;
 }
 
 .app {
   max-width: 2000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 8px;
   height: 100vh;
 }
 
 h1 {
   margin: 0;
   color: #fff;
-  font-size: 2rem;
+  font-size: 1.3rem;
+  font-weight: 500;
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
+  padding: 4px 8px;
 }
 
 .nav {
   display: flex;
-  gap: 10px;
+  gap: 4px;
 }
 
 .nav-link {
-  padding: 8px 16px;
+  padding: 6px 12px;
   color: #888;
   text-decoration: none;
-  border-radius: 4px;
-  transition: all 0.2s;
-  font-weight: 500;
+  border-radius: 2px;
+  transition: all 0.1s;
+  font-weight: 400;
+  font-size: 13px;
 }
 
 .nav-link:hover {
   color: #e0e0e0;
-  background-color: rgba(74, 158, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .nav-link.active {
   color: #4a9eff;
-  background-color: rgba(74, 158, 255, 0.15);
+  background-color: rgba(74, 158, 255, 0.1);
+  border-bottom: 1px solid #4a9eff;
 }
 
 /* Top request panel - full width */
@@ -72,7 +77,7 @@ h1 {
 .form-columns {
   display: grid;
   grid-template-columns: 1fr 400px;
-  gap: 20px;
+  gap: 12px;
 }
 
 .form-column-left {
@@ -83,13 +88,13 @@ h1 {
 .form-column-right {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
 .form-row-inline {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  gap: 10px;
 }
 
 .tall-textarea {
@@ -100,50 +105,51 @@ h1 {
 /* Bottom container - history left, response right */
 .bottom-container {
   display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 20px;
+  grid-template-columns: 300px 1fr;
+  gap: 8px;
   flex: 1;
   overflow: hidden;
 }
 
 .panel {
-  background-color: #2a2a2a;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background-color: #252526;
+  border: 1px solid #3e3e42;
+  border-radius: 0;
+  padding: 12px;
 }
 
 .panel h2 {
-  margin-bottom: 15px;
-  color: #fff;
-  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #cccccc;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .tools-selection {
   max-height: 150px;
   overflow-y: auto;
-  border: 1px solid #444;
-  border-radius: 4px;
-  padding: 8px;
-  background-color: #1a1a1a;
+  border: 1px solid #3e3e42;
+  border-radius: 2px;
+  padding: 6px;
+  background-color: #1e1e1e;
 }
 
 .tool-checkbox {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 4px;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 2px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.1s;
 }
 
 .tool-checkbox:hover {
-  background-color: #2a2a2a;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .tool-checkbox input[type="checkbox"] {
@@ -174,22 +180,30 @@ h1 {
 
 label {
   display: block;
-  margin-bottom: 5px;
-  color: #b0b0b0;
-  font-size: 0.9rem;
+  margin-bottom: 4px;
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 select,
 input,
 textarea {
   width: 100%;
-  padding: 10px;
-  background-color: #1a1a1a;
-  color: #e0e0e0;
-  border: 1px solid #444;
-  border-radius: 4px;
-  font-size: 0.95rem;
+  padding: 6px 8px;
+  background-color: #3c3c3c;
+  color: #cccccc;
+  border: 1px solid #3e3e42;
+  border-radius: 2px;
+  font-size: 13px;
   font-family: inherit;
+}
+
+select:focus,
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #007acc;
 }
 
 textarea {
@@ -203,33 +217,34 @@ input[type="number"] {
 }
 
 button {
-  padding: 12px 24px;
-  background-color: #4a9eff;
+  padding: 6px 14px;
+  background-color: #0e639c;
   color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 1rem;
+  border-radius: 2px;
+  font-size: 13px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.1s;
   width: 100%;
 }
 
 button:hover {
-  background-color: #3a8eef;
+  background-color: #1177bb;
 }
 
 button:disabled {
-  background-color: #555;
+  background-color: #3e3e42;
   cursor: not-allowed;
+  color: #888;
 }
 
 button.secondary {
-  background-color: #666;
-  margin-left: 10px;
+  background-color: #3e3e42;
+  margin-left: 8px;
 }
 
 button.secondary:hover {
-  background-color: #555;
+  background-color: #4e4e52;
 }
 
 .response-content {
@@ -269,7 +284,7 @@ button.secondary:hover {
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 2px;
   overflow-y: auto;
   flex: 1;
 }
@@ -281,46 +296,48 @@ button.secondary:hover {
 }
 
 .history-item {
-  background-color: #1a1a1a;
-  padding: 12px;
-  border-radius: 4px;
-  border: 1px solid #444;
+  background-color: #2d2d30;
+  padding: 6px 8px;
+  border-radius: 0;
+  border-left: 2px solid transparent;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: background-color 0.1s;
   flex-shrink: 0;
 }
 
 .history-item:hover {
-  border-color: #4a9eff;
+  background-color: #2a2d2e;
 }
 
 .history-item.selected {
-  border-color: #4a9eff;
-  background-color: #252525;
+  background-color: #37373d;
+  border-left-color: #007acc;
 }
 
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .history-meta {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  font-size: 0.85rem;
-  color: #888;
+  gap: 2px;
+  font-size: 11px;
+  color: #858585;
 }
 
 .provider-badge {
-  background-color: #4a9eff;
+  background-color: #0e639c;
   color: white;
-  padding: 2px 8px;
-  border-radius: 3px;
-  font-size: 0.8rem;
-  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .provider-badge.anthropic {
@@ -332,14 +349,14 @@ button.secondary:hover {
 }
 
 .history-content {
-  font-size: 0.85rem;
-  color: #b0b0b0;
+  font-size: 11px;
+  color: #cccccc;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .loading {
@@ -535,6 +552,7 @@ button.secondary:hover {
 .tool-use-name {
   font-size: 1rem;
   font-weight: 600;
+  padding-right: 10px;
   color: #10b981;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
 }
