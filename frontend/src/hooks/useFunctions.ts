@@ -41,6 +41,10 @@ function getExampleFunctions(): FunctionDefinition[] {
  * Get the current weather for a specific location
  * @param params.location - City name or coordinates (e.g., "San Francisco" or "37.7749,-122.4194")
  * @param params.units - Temperature units (default: celsius)
+ * @returns temperature - Current temperature in specified units
+ * @returns conditions - Weather conditions description
+ * @returns humidity - Humidity percentage
+ * @returns windSpeed - Wind speed in km/h or mph
  */
 export async function getCurrentWeather(params: {
   location: string;
@@ -75,6 +79,9 @@ export async function getCurrentWeather(params: {
  * @param params.limit - Maximum number of results (default: 100)
  * @param params.sortBy - Field to sort by
  * @param params.sortOrder - Sort order (default: asc)
+ * @returns results - Array of matching database records
+ * @returns totalCount - Total number of matching records
+ * @returns page - Current page number
  */
 export async function searchDatabase(params: {
   query: string;
@@ -113,6 +120,9 @@ export async function searchDatabase(params: {
  * @param params.from - Sender email address (optional)
  * @param params.cc - CC recipients (optional)
  * @param params.attachments - File attachments (optional)
+ * @returns success - Whether the email was sent successfully
+ * @returns messageId - Unique identifier for the sent message
+ * @returns timestamp - ISO timestamp when the email was sent
  */
 export async function sendEmail(params: {
   to: string[];

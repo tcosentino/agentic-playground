@@ -183,6 +183,36 @@ export function parseReturnTypeSchema(code: string): Record<string, { type: stri
 
   function visit(node: ts.Node) {
     if (ts.isFunctionDeclaration(node) && node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      // Get JSDoc @returns/@return tags for property descriptions
+      const returnDescriptions = new Map<string, string>();
+      const jsDocTags = ts.getJSDocCommentsAndTags(node);
+      if (jsDocTags && jsDocTags.length > 0) {
+        for (const tag of jsDocTags) {
+          if (ts.isJSDoc(tag) && tag.tags) {
+            for (const jsDocTag of tag.tags) {
+              // Check for @returns or @return tags
+              if ((ts.isJSDocReturnTag(jsDocTag) || jsDocTag.tagName.text === 'returns' || jsDocTag.tagName.text === 'return')
+                  && jsDocTag.comment) {
+                // Parse @returns property.name - description format
+                const commentText = typeof jsDocTag.comment === 'string'
+                  ? jsDocTag.comment
+                  : Array.isArray(jsDocTag.comment)
+                    ? jsDocTag.comment.map(c => c.text).join('')
+                    : '';
+
+                // Match "property.name - description" or "property.name description"
+                const propMatch = commentText.match(/(\w+)\s*-\s*(.+)/);
+                if (propMatch) {
+                  const propName = propMatch[1];
+                  const description = propMatch[2].trim();
+                  returnDescriptions.set(propName, description);
+                }
+              }
+            }
+          }
+        }
+      }
+
       if (!node.type) return;
 
       let typeNode: ts.TypeNode = node.type;
@@ -202,13 +232,17 @@ export function parseReturnTypeSchema(code: string): Record<string, { type: stri
             const propName = member.name.text;
             const propType = member.type ? mapTsTypeToJsonSchema(member.type, sourceFile) : 'string';
 
-            // Try to get inline comment description
-            let description = '';
-            const fullText = sourceFile.getFullText();
-            const memberText = fullText.substring(member.pos, member.end);
-            const commentMatch = memberText.match(/\/\/\s*(.+)/);
-            if (commentMatch) {
-              description = commentMatch[1].trim();
+            // Get description from JSDoc @returns or inline comment
+            let description = returnDescriptions.get(propName) || '';
+
+            // Fallback to inline comment if no JSDoc
+            if (!description) {
+              const fullText = sourceFile.getFullText();
+              const memberText = fullText.substring(member.pos, member.end);
+              const commentMatch = memberText.match(/\/\/\s*(.+)/);
+              if (commentMatch) {
+                description = commentMatch[1].trim();
+              }
             }
 
             returnSchema[propName] = {
