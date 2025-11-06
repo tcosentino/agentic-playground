@@ -519,6 +519,8 @@ button.secondary:hover {
   border-radius: 6px;
   padding: 15px;
   margin-bottom: 15px;
+  display: inline-block;
+  max-width: 100%;
 }
 
 .tool-use-header {
