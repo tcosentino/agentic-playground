@@ -18,6 +18,37 @@ export function parseParameterSchema(code: string): ParameterSchema | null {
   function visit(node: ts.Node) {
     // Find exported function declarations
     if (ts.isFunctionDeclaration(node) && node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      // Get JSDoc @param tags for descriptions
+      const paramDescriptions = new Map<string, string>();
+      const jsDocTags = ts.getJSDocCommentsAndTags(node);
+      if (jsDocTags && jsDocTags.length > 0) {
+        for (const tag of jsDocTags) {
+          if (ts.isJSDoc(tag) && tag.tags) {
+            for (const jsDocTag of tag.tags) {
+              if (ts.isJSDocParameterTag(jsDocTag) && jsDocTag.name) {
+                // Get the parameter name text (handles both "params.location" and just "location")
+                const fullText = sourceFile.getFullText();
+                const nameText = fullText.substring(jsDocTag.name.pos, jsDocTag.name.end).trim();
+
+                // Extract property name from "params.propertyName" format
+                const paramMatch = nameText.match(/params\.(\w+)/);
+                if (paramMatch && jsDocTag.comment) {
+                  const propName = paramMatch[1];
+                  let comment = typeof jsDocTag.comment === 'string'
+                    ? jsDocTag.comment
+                    : Array.isArray(jsDocTag.comment)
+                      ? jsDocTag.comment.map(c => c.text).join('')
+                      : '';
+                  // Strip leading " - " or "- " from JSDoc convention
+                  comment = comment.trim().replace(/^-\s*/, '');
+                  paramDescriptions.set(propName, comment);
+                }
+              }
+            }
+          }
+        }
+      }
+
       // Get the first parameter (should be 'params')
       const paramsParam = node.parameters[0];
       if (!paramsParam || !paramsParam.type) {
@@ -35,15 +66,17 @@ export function parseParameterSchema(code: string): ParameterSchema | null {
             const propName = member.name.text;
             const isOptional = !!member.questionToken;
 
-            // Get inline comment for description
-            let description = '';
+            // Get description from JSDoc @param or inline comment
+            let description = paramDescriptions.get(propName) || '';
 
-            // Try to get inline comment
-            const fullText = sourceFile.getFullText();
-            const memberText = fullText.substring(member.pos, member.end);
-            const commentMatch = memberText.match(/\/\/\s*(.+)/);
-            if (commentMatch) {
-              description = commentMatch[1].trim();
+            // Fallback to inline comment if no JSDoc
+            if (!description) {
+              const fullText = sourceFile.getFullText();
+              const memberText = fullText.substring(member.pos, member.end);
+              const commentMatch = memberText.match(/\/\/\s*(.+)/);
+              if (commentMatch) {
+                description = commentMatch[1].trim();
+              }
             }
 
             // Get type
@@ -159,4 +192,42 @@ export function parseExportedFunctionName(code: string): string | null {
 
   visit(sourceFile);
   return functionName;
+}
+
+/**
+ * Extracts JSDoc comment description from the function
+ */
+export function parseFunctionDescription(code: string): string | null {
+  const sourceFile = ts.createSourceFile(
+    'temp.ts',
+    code,
+    ts.ScriptTarget.Latest,
+    true
+  );
+
+  let description: string | null = null;
+
+  function visit(node: ts.Node) {
+    if (ts.isFunctionDeclaration(node) && node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+      // Get JSDoc tags
+      const jsDocTags = ts.getJSDocCommentsAndTags(node);
+      if (jsDocTags && jsDocTags.length > 0) {
+        for (const tag of jsDocTags) {
+          if (ts.isJSDoc(tag) && tag.comment) {
+            // Extract the description from the JSDoc comment
+            if (typeof tag.comment === 'string') {
+              description = tag.comment.trim().replace(/^-\s*/, '');
+            } else if (Array.isArray(tag.comment)) {
+              description = tag.comment.map(c => c.text).join('').trim().replace(/^-\s*/, '');
+            }
+            break;
+          }
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return description;
 }

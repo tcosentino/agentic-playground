@@ -39,12 +39,15 @@ export function FunctionEditor({ functionDef, onUpdate }: FunctionEditorProps) {
   const handleSave = () => {
     if (functionDef) {
       // Validate and extract schema before saving
-      const { validation, parameters, returnType } = validateAndExtractSchema(localCode);
+      const { validation, parameters, returnType, description } = validateAndExtractSchema(localCode);
+
+      // Use extracted JSDoc description if available, otherwise use manual description
+      const finalDescription = description || localDescription;
 
       onUpdate(functionDef.id, {
         code: localCode,
         name: localName,
-        description: localDescription,
+        description: finalDescription,
         validation,
         parameters: parameters || undefined,
         returnType: returnType || undefined,

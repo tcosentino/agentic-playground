@@ -10,10 +10,12 @@ const STORAGE_KEY = 'ai-playground-functions';
 function getExampleTemplate(name: string, description: string): string {
   return `/**
  * ${description || 'Function description'}
+ * @param params.query - The search query
+ * @param params.maxResults - Maximum number of results to return
  */
 export async function ${name}(params: {
-  query: string; // The search query
-  maxResults?: number; // Maximum number of results to return
+  query: string;
+  maxResults?: number;
 }): Promise<{ success: boolean; data: any }> {
   // Your implementation here
   const { query, maxResults = 10 } = params;
@@ -37,10 +39,12 @@ function getExampleFunctions(): FunctionDefinition[] {
 
   const weatherCode = `/**
  * Get the current weather for a specific location
+ * @param params.location - City name or coordinates (e.g., "San Francisco" or "37.7749,-122.4194")
+ * @param params.units - Temperature units (default: celsius)
  */
 export async function getCurrentWeather(params: {
-  location: string; // City name or coordinates (e.g., "San Francisco" or "37.7749,-122.4194")
-  units?: 'celsius' | 'fahrenheit'; // Temperature units (default: celsius)
+  location: string;
+  units?: 'celsius' | 'fahrenheit';
 }): Promise<{
   temperature: number;
   conditions: string;
@@ -66,13 +70,18 @@ export async function getCurrentWeather(params: {
 
   const searchCode = `/**
  * Search through database records with filters
+ * @param params.query - Search query string
+ * @param params.table - Database table name
+ * @param params.limit - Maximum number of results (default: 100)
+ * @param params.sortBy - Field to sort by
+ * @param params.sortOrder - Sort order (default: asc)
  */
 export async function searchDatabase(params: {
-  query: string; // Search query string
-  table: string; // Database table name
-  limit?: number; // Maximum number of results (default: 100)
-  sortBy?: string; // Field to sort by
-  sortOrder?: 'asc' | 'desc'; // Sort order (default: asc)
+  query: string;
+  table: string;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }): Promise<{
   results: Array<Record<string, any>>;
   totalCount: number;
@@ -98,14 +107,20 @@ export async function searchDatabase(params: {
 
   const emailCode = `/**
  * Send an email to one or more recipients
+ * @param params.to - Array of recipient email addresses
+ * @param params.subject - Email subject line
+ * @param params.body - Email body content
+ * @param params.from - Sender email address (optional)
+ * @param params.cc - CC recipients (optional)
+ * @param params.attachments - File attachments (optional)
  */
 export async function sendEmail(params: {
-  to: string[]; // Array of recipient email addresses
-  subject: string; // Email subject line
-  body: string; // Email body content
-  from?: string; // Sender email address (optional)
-  cc?: string[]; // CC recipients (optional)
-  attachments?: Array<{ filename: string; url: string }>; // File attachments (optional)
+  to: string[];
+  subject: string;
+  body: string;
+  from?: string;
+  cc?: string[];
+  attachments?: Array<{ filename: string; url: string }>;
 }): Promise<{
   success: boolean;
   messageId: string;
